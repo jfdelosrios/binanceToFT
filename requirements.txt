@@ -1,0 +1,6 @@
+pandas
+python-binance
+requests 
+IPython
+pyinstaller
+jupyter

@@ -1,3 +1,9 @@
+C_simbolo.py
+varios.py
+salida/
+tmp/
+script.sh
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
