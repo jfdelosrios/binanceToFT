@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """Genera archivo csv legible para Forex Tester usando data de Binance."""
 
-from pandas import DataFrame
-from C_Simbolo import C_Simbolo, leerDataFrameBinance
-from requests.exceptions import ConnectionError
-from binance.exceptions import BinanceAPIException
+from pandas import DataFrame, to_datetime
+from C_Simbolo import BuscarDataFrameSimbolo
 from os import makedirs
 
 
@@ -12,6 +10,8 @@ def parsearDataFrame(_simbolo:str, _df: DataFrame) -> DataFrame:
     """vuelve legible el dataFrame _df para para Forex Tester."""
     
     _df = _df.sort_values(by = 'Open time', ascending = True)
+    
+    _df['Open time'] = to_datetime(_df['Open time'], unit = 'ms', utc = True)
     
     _df['<DTYYYYMMDD>'] = _df['Open time'].dt.strftime('%Y%m%d')
     _df['<TIME>'] = _df['Open time'].dt.strftime('%H%M')
@@ -66,44 +66,20 @@ def generarArchivoCSV(
             * _descargar: Descarga el dataFrame de binance en el directorio _pathTMP.
     """
     
-    if(_descargar):
-
-        try:
-
-            simbolo = C_Simbolo(simbolo = _simbolo)
-
-        except (ConnectionError, BinanceAPIException) as error:
-
-            return {'status': ['error', str(error)]}
-
-        dict_s = simbolo.descargarDataFrameBinance(
-            _timeFrame, 
-            _pathTMP
+    dict_s = BuscarDataFrameSimbolo(
+                _simbolo = _simbolo, 
+                _timeFrame =_timeFrame, 
+                _path = _pathTMP,
+                _descargar = _descargar
             )
-
-        if(dict_s['status'][0] == 'error'):
-            return {'status': dict_s['status']}
-
-    dict_s = leerDataFrameBinance(
-        '{}\\{}-{}.csv'.format(_pathTMP, _simbolo, _timeFrame)
-        )
 
     if(dict_s['status'][0] == 'error'):
         return {'status': dict_s['status']}
 
-    df = parsearDataFrame(
-        _simbolo,
-
-        dict_s['out'][[
-            'Open time', 
-            'Open', 
-            'High', 
-            'Low', 
-            'Close', 
-            'Number of trades'
-            ]]
-
-        )
+    try:
+        df = parsearDataFrame(_simbolo,dict_s['out'])
+    except (KeyError, ValueError) as error:
+        return {'status': ['error', str(error)]}
     
     makedirs(_pathSalida, exist_ok = True)
     

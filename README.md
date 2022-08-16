@@ -1,6 +1,6 @@
 # binanceToFT
 
-Genera archivo csv legible para [Forex Tester](https://forextester.com/) usando data de [Binance](https://www.binance.com).
+Genera archivo csv legible para [Forex Tester](https://forextester.com/) usando data de [Binance](https://www.binance.com). El huso horario de la fecha es UTC + 0.
 
 
 ## Archivos requeridos:
