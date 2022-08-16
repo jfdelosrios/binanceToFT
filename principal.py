@@ -77,9 +77,22 @@ def generarArchivoCSV(
         return {'status': dict_s['status']}
 
     try:
-        df = parsearDataFrame(_simbolo,dict_s['out'])
+        df = parsearDataFrame(_simbolo, dict_s['out'])
     except (KeyError, ValueError) as error:
-        return {'status': ['error', str(error)]}
+
+        _salida = {
+            'status': [
+                    'error', 
+                    '{}\\{}-{}.csv esta dañado. {}'.format(
+                        _pathTMP, 
+                        _simbolo, 
+                        _timeFrame,  
+                        str(error)
+                        )
+                ]
+            }
+
+        return _salida
     
     makedirs(_pathSalida, exist_ok = True)
     
