@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""""""
+"""Genera interfaz por consola."""
 
 from principal import generarArchivoCSV
 from binance.client import BaseClient

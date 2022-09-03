@@ -62,12 +62,11 @@ def generarArchivoCSV(
             * _simbolo: Simbolo.
 
             * _timeFrame: TimeFrame del simbolo. ver constantes KLINE_INTERVAL
-
                 https://python-binance.readthedocs.io/en/latest/constants.html
 
-            * _pathTMP: ruta donde se guarda el archivo resultante.
+            * _cantVelas: Cantidad de velas que el usuario quiere descargar.
 
-            * _descargar: Descarga el dataFrame de binance en el directorio _pathTMP.
+            * _pathTMP: ruta donde se guarda el archivo resultante.
     """
     
     fecha_barraActual =  datetime.timestamp(datetime.now(tz = timezone('UTC'))) * 1000
