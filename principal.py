@@ -2,8 +2,12 @@
 """Genera archivo csv legible para Forex Tester usando data de Binance."""
 
 from pandas import DataFrame, to_datetime
-from C_Simbolo import BuscarDataFrameSimbolo
+from C_Simbolo import C_Simbolo
 from os import makedirs
+from datetime import datetime
+from pytz import timezone
+from requests.exceptions import ReadTimeout, ConnectTimeout
+from binance.exceptions import BinanceAPIException
 
 
 def parsearDataFrame(_simbolo:str, _df: DataFrame) -> DataFrame:
@@ -50,7 +54,7 @@ def generarArchivoCSV(
     _timeFrame:str,
     _pathTMP:str,
     _pathSalida:str,
-    _descargar:bool
+    _cantVelas:int
 ) -> dict[list[str,str]]:
     """
         Genera archivo csv desde data de Binance. Donde:
@@ -66,11 +70,18 @@ def generarArchivoCSV(
             * _descargar: Descarga el dataFrame de binance en el directorio _pathTMP.
     """
     
-    dict_s = BuscarDataFrameSimbolo(
-                _simbolo = _simbolo, 
-                _timeFrame =_timeFrame, 
-                _path = _pathTMP,
-                _descargar = _descargar
+    fecha_barraActual =  datetime.timestamp(datetime.now(tz = timezone('UTC'))) * 1000
+
+    try:
+        simbolo = C_Simbolo(simbolo = _simbolo)
+    except (ReadTimeout, ConnectTimeout, BinanceAPIException) as error:
+        return {'status': ['error', str(error)], 'out': DataFrame}
+
+    dict_s = simbolo.leer_velas(
+                _interval =_timeFrame,
+                ini = int(fecha_barraActual),
+                cantBarras = _cantVelas,
+                espera = 0.1
             )
 
     if(dict_s['status'][0] == 'error'):

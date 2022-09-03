@@ -19,11 +19,11 @@ def ejecutarPorConsola(correJupyter:bool) -> None:
     _pathTMP:str = '.\\tmp'
    
     dict_s:dict = generarArchivoCSV(
-            _entrada['simbolo'],
-            _entrada['timeFrame'],
-            _pathTMP,
-            _pathSalida,
-            _entrada['descargar']
+            _simbolo = _entrada['simbolo'],
+            _timeFrame = _entrada['timeFrame'],
+            _pathTMP = _pathTMP,
+            _pathSalida = _pathSalida,
+            _cantVelas = _entrada['cantVelas']
         )
 
     if(dict_s['status'][0] == 'error'):
@@ -90,19 +90,19 @@ def leerTeclado() -> dict[str, str, str]:
 
         while True:
 
-            _salida['descargar']:str = input(
-                "Desea descargar el archivo de Binance? (s/n): "
+            _salida['cantVelas']:int = input(
+                "Cúantas barras desea descargar?: "
                 )
 
-            _salida['descargar'] = _salida['descargar'].lower()
+            try:
+                _salida['cantVelas'] = int(_salida['cantVelas']) 
+            except:
+                continue
 
-            if(_salida['descargar'] == 's'):
-                _salida['descargar'] = True
-                break
-                
-            if(_salida['descargar'] == 'n'):
-                _salida['descargar'] = False
-                break
+            if(_salida['cantVelas'] <= 0):
+                continue
+
+            break
 
         while True:
 
